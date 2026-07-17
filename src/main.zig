@@ -7,7 +7,7 @@ const gain_param_suffix = " dB";
 const GainPlugin = struct {
     plugin: clap.clap_plugin,
     host: *const clap.clap_host,
-    gain_db: f32 = 0.0,
+    gain_db: std.atomic.Value(f32) = .init(0.0),
 };
 
 export const clap_entry: clap.clap_plugin_entry = .{
@@ -167,6 +167,7 @@ const gain_plugin: clap.clap_plugin = .{
             process: [*c]const clap.clap_process,
         ) callconv(.c) clap.clap_process_status {
             const plug: *GainPlugin = @ptrCast(@alignCast(plugin.*.plugin_data));
+            var gain_db = plug.gain_db.load(.monotonic);
 
             const in_events = process.*.in_events;
             for (0..in_events.*.size.?(in_events)) |i| {
@@ -176,12 +177,13 @@ const gain_plugin: clap.clap_plugin = .{
                 {
                     const event_param_value: *const clap.clap_event_param_value = @ptrCast(@alignCast(event));
                     if (event_param_value.param_id == gain_param_id) {
-                        plug.gain_db = @floatCast(event_param_value.value);
+                        gain_db = @floatCast(event_param_value.value);
+                        plug.gain_db.store(gain_db, .monotonic);
                     }
                 }
             }
 
-            const gain_linear = std.math.pow(f32, 10.0, plug.gain_db * 0.05);
+            const gain_linear = std.math.pow(f32, 10.0, gain_db * 0.05);
             const inputs = process.*.audio_inputs[0];
             const outputs = process.*.audio_outputs[0];
             const num_channels = @min(inputs.channel_count, outputs.channel_count);
@@ -264,7 +266,7 @@ const extension_params: clap.clap_plugin_params = .{
             const plug: *GainPlugin = @ptrCast(@alignCast(plugin.*.plugin_data));
 
             if (param_id == gain_param_id) {
-                out_value.* = plug.gain_db;
+                out_value.* = plug.gain_db.load(.monotonic);
                 return true;
             }
 
@@ -341,7 +343,7 @@ const extension_params: clap.clap_plugin_params = .{
                     const event_param_value: *const clap.clap_event_param_value = @ptrCast(@alignCast(event));
 
                     if (event_param_value.param_id == gain_param_id) {
-                        plug.gain_db = @floatCast(event_param_value.value);
+                        plug.gain_db.store(@floatCast(event_param_value.value), .monotonic);
                     }
                 }
             }
@@ -393,7 +395,8 @@ const extension_state: clap.clap_plugin_state = .{
             stream: [*c]const clap.clap_ostream,
         ) callconv(.c) bool {
             const plug: *GainPlugin = @ptrCast(@alignCast(plugin.*.plugin_data));
-            const bytes_written = stream.*.write.?(stream, &plug.gain_db, @sizeOf(f32));
+            var gain_db = plug.gain_db.load(.monotonic);
+            const bytes_written = stream.*.write.?(stream, &gain_db, @sizeOf(f32));
             return bytes_written == @sizeOf(f32);
         }
     }.save,
@@ -403,9 +406,13 @@ const extension_state: clap.clap_plugin_state = .{
             plugin: [*c]const clap.clap_plugin,
             stream: [*c]const clap.clap_istream,
         ) callconv(.c) bool {
+            var gain_db: f32 = undefined;
+            const bytes_read = stream.*.read.?(stream, &gain_db, @sizeOf(f32));
+            if (bytes_read != @sizeOf(f32)) return false;
+
             const plug: *GainPlugin = @ptrCast(@alignCast(plugin.*.plugin_data));
-            const bytes_read = stream.*.read.?(stream, &plug.gain_db, @sizeOf(f32));
-            return bytes_read == @sizeOf(f32);
+            plug.gain_db.store(gain_db, .monotonic);
+            return true;
         }
     }.load,
 };
