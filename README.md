@@ -1,6 +1,6 @@
 # hello-clap-zig
 
-A minimal non-GUI CLAP gain plugin written in Zig.
+A minimal CLAP gain plugin written in Zig.
 
 Setup:
 
