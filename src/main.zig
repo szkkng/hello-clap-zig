@@ -168,31 +168,53 @@ const gain_plugin: clap.clap_plugin = .{
         ) callconv(.c) clap.clap_process_status {
             const plug: *GainPlugin = @ptrCast(@alignCast(plugin.*.plugin_data));
             var gain_db = plug.gain_db.load(.monotonic);
-
             const in_events = process.*.in_events;
-            for (0..in_events.*.size.?(in_events)) |i| {
-                const event = in_events.*.get.?(in_events, @intCast(i));
-                if (event.*.space_id == clap.CLAP_CORE_EVENT_SPACE_ID and
-                    event.*.type == clap.CLAP_EVENT_PARAM_VALUE)
-                {
-                    const event_param_value: *const clap.clap_event_param_value = @ptrCast(@alignCast(event));
-                    if (event_param_value.param_id == gain_param_id) {
-                        gain_db = @floatCast(event_param_value.value);
-                        plug.gain_db.store(gain_db, .monotonic);
+            const num_events = in_events.*.size.?(in_events);
+            const num_frames = process.*.frames_count;
+            var event_index: u32 = 0;
+            var next_event_frame: u32 = if (num_events > 0) 0 else num_frames;
+
+            var i: usize = 0;
+            while (i < num_frames) {
+                while (event_index < num_events and next_event_frame == i) {
+                    const header = in_events.*.get.?(in_events, @intCast(event_index));
+
+                    if (header.*.time != i) {
+                        next_event_frame = header.*.time;
+                        break;
+                    }
+
+                    if (header.*.space_id == clap.CLAP_CORE_EVENT_SPACE_ID and
+                        header.*.type == clap.CLAP_EVENT_PARAM_VALUE)
+                    {
+                        const event_param_value: *const clap.clap_event_param_value = @ptrCast(@alignCast(header));
+                        if (event_param_value.param_id == gain_param_id) {
+                            gain_db = @floatCast(event_param_value.value);
+                        }
+                    }
+                    event_index += 1;
+
+                    if (event_index == num_events) {
+                        next_event_frame = num_frames;
+                        break;
                     }
                 }
-            }
 
-            const gain_linear = std.math.pow(f32, 10.0, gain_db * 0.05);
-            const inputs = process.*.audio_inputs[0];
-            const outputs = process.*.audio_outputs[0];
-            const num_channels = @min(inputs.channel_count, outputs.channel_count);
-            const frame_count = process.*.frames_count;
-            for (0..num_channels) |ch| {
-                for (0..frame_count) |i| {
-                    outputs.data32[ch][i] = inputs.data32[ch][i] * gain_linear;
+                const gain_linear = std.math.pow(f32, 10.0, gain_db * 0.05);
+
+                while (i < next_event_frame) : (i += 1) {
+                    const in_l = process.*.audio_inputs[0].data32[0][i];
+                    const in_r = process.*.audio_inputs[0].data32[1][i];
+
+                    const out_l = in_l * gain_linear;
+                    const out_r = in_r * gain_linear;
+
+                    process.*.audio_outputs[0].data32[0][i] = out_l;
+                    process.*.audio_outputs[0].data32[1][i] = out_r;
                 }
             }
+
+            plug.gain_db.store(gain_db, .monotonic);
 
             return clap.CLAP_PROCESS_CONTINUE;
         }
@@ -247,7 +269,7 @@ const extension_params: clap.clap_plugin_params = .{
             if (param_index > 0) return false;
 
             param_info.*.id = gain_param_id;
-            param_info.*.flags = clap.CLAP_PARAM_IS_AUTOMATABLE | clap.CLAP_PARAM_IS_MODULATABLE;
+            param_info.*.flags = clap.CLAP_PARAM_IS_AUTOMATABLE;
             _ = std.mem.printSentinel(param_info.*.name[0..], "{s}", .{"Gain"}, 0) catch unreachable;
             param_info.*.min_value = -60.0;
             param_info.*.max_value = 12.0;
