@@ -317,7 +317,7 @@ const extension_params: clap.clap_plugin_params = .{
                 return true;
             }
 
-            return true;
+            return false;
         }
     }.valueToText,
 
