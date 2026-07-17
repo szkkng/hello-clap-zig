@@ -396,8 +396,20 @@ const extension_state: clap.clap_plugin_state = .{
         ) callconv(.c) bool {
             const plug: *GainPlugin = @ptrCast(@alignCast(plugin.*.plugin_data));
             var gain_db = plug.gain_db.load(.monotonic);
-            const bytes_written = stream.*.write.?(stream, &gain_db, @sizeOf(f32));
-            return bytes_written == @sizeOf(f32);
+            const data = std.mem.asBytes(&gain_db);
+
+            var offset: usize = 0;
+            while (offset < data.len) {
+                const bytes_written = stream.*.write.?(
+                    stream,
+                    data.ptr + offset,
+                    data.len - offset,
+                );
+                if (bytes_written <= 0) return false;
+                offset += @intCast(bytes_written);
+            }
+
+            return true;
         }
     }.save,
 
@@ -407,8 +419,18 @@ const extension_state: clap.clap_plugin_state = .{
             stream: [*c]const clap.clap_istream,
         ) callconv(.c) bool {
             var gain_db: f32 = undefined;
-            const bytes_read = stream.*.read.?(stream, &gain_db, @sizeOf(f32));
-            if (bytes_read != @sizeOf(f32)) return false;
+            const data = std.mem.asBytes(&gain_db);
+
+            var offset: usize = 0;
+            while (offset < data.len) {
+                const bytes_read = stream.*.read.?(
+                    stream,
+                    data.ptr + offset,
+                    data.len - offset,
+                );
+                if (bytes_read <= 0) return false;
+                offset += @intCast(bytes_read);
+            }
 
             const plug: *GainPlugin = @ptrCast(@alignCast(plugin.*.plugin_data));
             plug.gain_db.store(gain_db, .monotonic);
