@@ -9,6 +9,10 @@
       url = "github:zigtools/zls";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    clap-devtools = {
+      url = "git+https://codeberg.org/kengo/clap-devtools";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -16,6 +20,7 @@
       nixpkgs,
       zig,
       zls,
+      clap-devtools,
       ...
     }:
     let
@@ -28,6 +33,8 @@
             packages = [
               zig.packages.${system}.nightly
               zls.packages.${system}.zls
+              clap-devtools.packages.${system}.clap-info
+              clap-devtools.packages.${system}.clap-validator
             ];
           };
         }
