@@ -1,27 +1,20 @@
 const std = @import("std");
-const Translator = @import("translate_c").Translator;
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-    const clap = b.dependency("clap", .{});
-
-    const translate_c = b.dependency("translate_c", .{});
-    const translator: Translator = .init(translate_c, .{
-        .c_source_file = clap.path("include/clap/clap.h"),
-        .target = target,
-        .optimize = optimize,
-    });
+    const clap = b.dependency("clap_zig", .{});
 
     const plugin = b.addLibrary(.{
         .name = "HelloClapZig",
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/main.zig"),
             .target = target,
+            .optimize = optimize,
         }),
         .linkage = .dynamic,
     });
-    plugin.root_module.addImport("clap", translator.mod);
+    plugin.root_module.addImport("clap_zig", clap.module("clap_zig"));
 
     const install_step = b.getInstallStep();
     switch (target.result.os.tag) {

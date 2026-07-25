@@ -4,13 +4,9 @@
     .fingerprint = 0x29b1e27a3cf1725,
     .minimum_zig_version = "0.17.0-dev.251+0db721ec2",
     .dependencies = .{
-        .clap = .{
-            .url = "git+https://github.com/free-audio/clap.git?ref=1.2.10#195b42a004144fab0b3cf95e9c067187d15365b7",
-            .hash = "N-V-__8AAB-JOwBFtOGup87WSc2jjAlPh8eIMTZnpkjysvO1",
-        },
-        .translate_c = .{
-            .url = "git+https://codeberg.org/ziglang/translate-c#12c1515c074cfa9c69a799eb33506464a27c6332",
-            .hash = "translate_c-0.0.0-Q_BUWvo6BwAVl3qDhMeQNrgCAljvDeGUnwqpnGvB0_YM",
+        .clap_zig = .{
+            .url = "git+https://codeberg.org/kengo/clap-zig#a6dff953f189c176d69cda741044718e9940c002",
+            .hash = "clap_zig-0.0.0-R8InxA-mAAClyneD4HRx0Mf2xNYV-dqf8DbHxi0o3zRz",
         },
     },
     .paths = .{
