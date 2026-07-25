@@ -1,12 +1,8 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     zig = {
       url = "github:silversquirl/zig-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    zls = {
-      url = "github:zigtools/zls";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     clap-devtools = {
@@ -19,7 +15,6 @@
     {
       nixpkgs,
       zig,
-      zls,
       clap-devtools,
       ...
     }:
@@ -31,8 +26,8 @@
         system: pkgs: {
           default = pkgs.mkShellNoCC {
             packages = [
-              zig.packages.${system}.nightly
-              zls.packages.${system}.zls
+              zig.packages.${system}.default
+              zig.packages.${system}.default.zls
               clap-devtools.packages.${system}.clap-info
               clap-devtools.packages.${system}.clap-validator
             ];
