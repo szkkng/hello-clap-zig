@@ -10,7 +10,7 @@ const GainPlugin = struct {
     gain_db: std.atomic.Value(f32) = .init(0.0),
 };
 
-export const clap_entry: clap.Plugin.Entry = .{
+export const clap_entry: clap.PluginEntry = .{
     .init = struct {
         fn f(plugin_path: [*:0]const u8) callconv(.c) bool {
             _ = plugin_path;
@@ -24,7 +24,7 @@ export const clap_entry: clap.Plugin.Entry = .{
 
     .getFactory = struct {
         fn f(factory_id: [*:0]const u8) callconv(.c) ?*const anyopaque {
-            if (std.mem.eql(u8, std.mem.span(factory_id), clap.Plugin.Factory.id[0..])) {
+            if (std.mem.eql(u8, std.mem.span(factory_id), clap.factory.plugin.Factory.id[0..])) {
                 return @ptrCast(&plugin_factory);
             }
 
@@ -33,9 +33,9 @@ export const clap_entry: clap.Plugin.Entry = .{
     }.f,
 };
 
-const plugin_factory: clap.Plugin.Factory = .{
+const plugin_factory: clap.factory.plugin.Factory = .{
     .getPluginCount = struct {
-        fn f(factory: *const clap.Plugin.Factory) callconv(.c) u32 {
+        fn f(factory: *const clap.factory.plugin.Factory) callconv(.c) u32 {
             _ = factory;
             return 1;
         }
@@ -43,7 +43,7 @@ const plugin_factory: clap.Plugin.Factory = .{
 
     .getPluginDescriptor = struct {
         fn f(
-            factory: *const clap.Plugin.Factory,
+            factory: *const clap.factory.plugin.Factory,
             index: u32,
         ) callconv(.c) ?*const clap.Plugin.Descriptor {
             _ = factory;
@@ -53,7 +53,7 @@ const plugin_factory: clap.Plugin.Factory = .{
 
     .createPlugin = struct {
         fn f(
-            factory: *const clap.Plugin.Factory,
+            factory: *const clap.factory.plugin.Factory,
             host: *const clap.Host,
             plugin_id: [*:0]const u8,
         ) callconv(.c) ?*const clap.Plugin {
@@ -93,8 +93,8 @@ const plugin_descriptor: clap.Plugin.Descriptor = .{
     .version = "1.0.0",
     .description = "Hello, CLAP!",
     .features = &.{
-        clap.Plugin.feature.audio_effect,
-        clap.Plugin.feature.stereo,
+        clap.plugin_feature.audio_effect,
+        clap.plugin_feature.stereo,
     },
 };
 

@@ -5,8 +5,8 @@
     .minimum_zig_version = "0.17.0-dev.251+0db721ec2",
     .dependencies = .{
         .clap_zig = .{
-            .url = "git+https://codeberg.org/kengo/clap-zig#a6dff953f189c176d69cda741044718e9940c002",
-            .hash = "clap_zig-0.0.0-R8InxA-mAAClyneD4HRx0Mf2xNYV-dqf8DbHxi0o3zRz",
+            .url = "git+https://codeberg.org/kengo/clap-zig.git#6972011514f8fe9ee055810087a30692f9490a5a",
+            .hash = "clap_zig-0.0.0-R8InxMWjAADqgLoT2hAxNxE6bHgl-jVs2aAxtkCiBos8",
         },
     },
     .paths = .{
