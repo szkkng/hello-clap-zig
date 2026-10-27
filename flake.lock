@@ -1,32 +1,12 @@
 {
   "nodes": {
-    "clap-devtools": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1784348375,
-        "narHash": "sha256-fgc75+Tu3Efilsd3ZqGDhfhpJGv4dE6V5W9nCzGmLdk=",
-        "ref": "refs/heads/main",
-        "rev": "db1bb868393ae4209bec2d5558ff188d342655aa",
-        "revCount": 1,
-        "type": "git",
-        "url": "https://codeberg.org/kengo/clap-devtools"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://codeberg.org/kengo/clap-devtools"
-      }
-    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1784796856,
-        "narHash": "sha256-wWFrV5/Qbm+lyt5x20E/bSbfJiGKMo4RCxZV8cl/WZI=",
+        "lastModified": 1792773339,
+        "narHash": "sha256-rZLrzrC6i+jnTAlvPZHogKDulY7WWDEv9hJeHieO7Zw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e2587caef70cea85dd97d7daab492899902dbf5d",
+        "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
         "type": "github"
       },
       "original": {
@@ -38,29 +18,7 @@
     },
     "root": {
       "inputs": {
-        "clap-devtools": "clap-devtools",
-        "nixpkgs": "nixpkgs",
-        "zig": "zig"
-      }
-    },
-    "zig": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1784595499,
-        "narHash": "sha256-8c/IKoO8Y/kNiR0gIXqw4PxunYvyZQxO49k6V06s5lQ=",
-        "owner": "silversquirl",
-        "repo": "zig-flake",
-        "rev": "fe9b98464ee4b285548161509eae1cd4ef2e1bb1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "silversquirl",
-        "repo": "zig-flake",
-        "type": "github"
+        "nixpkgs": "nixpkgs"
       }
     }
   },

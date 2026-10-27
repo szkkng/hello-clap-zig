@@ -12,5 +12,5 @@ Build & Install:
 
 ```bash
 # Set -p to your CLAP plugin directory.
-zig build -Doptimize=ReleaseFast -p ~/Library/Audio/Plug-Ins/CLAP
+zig build --release=fast -p ~/Library/Audio/Plug-Ins/CLAP
 ```

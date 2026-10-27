@@ -2,11 +2,11 @@
     .name = .hello_clap_zig,
     .version = "0.0.0",
     .fingerprint = 0x29b1e27a3cf1725,
-    .minimum_zig_version = "0.17.0-dev.251+0db721ec2",
+    .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .clap_zig = .{
-            .url = "git+https://codeberg.org/kengo/clap-zig.git#6972011514f8fe9ee055810087a30692f9490a5a",
-            .hash = "clap_zig-0.0.0-R8InxMWjAADqgLoT2hAxNxE6bHgl-jVs2aAxtkCiBos8",
+            .url = "git+https://codeberg.org/kengo/clap-zig.git#4585bb9f93c7e401712bf2ff88741b4b6aaa8a93",
+            .hash = "clap_zig-0.0.0-R8InxMSjAAB-wLnyWzT9IPqoEG4kGDrxn3YLxltUhIGc",
         },
     },
     .paths = .{
