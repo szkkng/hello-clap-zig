@@ -5,8 +5,8 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .clap_zig = .{
-            .url = "git+https://github.com/szkkng/clap-zig.git#1196bf11ed21c900fd8245b4e21b513e67db252e",
-            .hash = "clap_zig-0.0.0-R8InxByjAAAPuXOz5bD_2rL2OtSV4u_0bV1SUfQD19jS",
+            .url = "git+https://github.com/szkkng/clap-zig.git#1cf54b8f5b9ac69898d547024c8c8456bfb648fe",
+            .hash = "clap_zig-0.0.0-R8InxBeqAADGGdWtPsLaDIzVFxcGD-kgX1hkzbaUe-l8",
         },
     },
     .paths = .{

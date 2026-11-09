@@ -24,7 +24,7 @@ export const clap_entry: clap.PluginEntry = .{
 
     .getFactory = struct {
         fn f(factory_id: [*:0]const u8) callconv(.c) ?*const anyopaque {
-            if (std.mem.eql(u8, std.mem.span(factory_id), clap.factory.plugin.Factory.id[0..])) {
+            if (std.mem.eql(u8, std.mem.span(factory_id), clap.factory.plugin.id[0..])) {
                 return @ptrCast(&plugin_factory);
             }
 
@@ -199,14 +199,14 @@ const gain_plugin: clap.Plugin = .{
                 const gain_linear = std.math.pow(f32, 10.0, gain_db * 0.05);
 
                 while (i < next_event_frame) : (i += 1) {
-                    const in_l = process.audio_inputs[0].data32.?[0][i];
-                    const in_r = process.audio_inputs[0].data32.?[1][i];
+                    const in_l = process.audio_inputs.?[0].data32.?[0][i];
+                    const in_r = process.audio_inputs.?[0].data32.?[1][i];
 
                     const out_l = in_l * gain_linear;
                     const out_r = in_r * gain_linear;
 
-                    process.audio_outputs[0].data32.?[0][i] = out_l;
-                    process.audio_outputs[0].data32.?[1][i] = out_r;
+                    process.audio_outputs.?[0].data32.?[0][i] = out_l;
+                    process.audio_outputs.?[0].data32.?[1][i] = out_r;
                 }
             }
 
