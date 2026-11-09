@@ -290,7 +290,7 @@ const extension_params: clap.ext.params.Plugin = .{
             plugin: *const clap.Plugin,
             param_id: clap.Id,
             value: f64,
-            out_buffer: [*:0]u8,
+            out_buffer: [*]u8,
             out_buffer_capacity: u32,
         ) callconv(.c) bool {
             _ = plugin;
