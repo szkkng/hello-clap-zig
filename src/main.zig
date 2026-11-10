@@ -180,8 +180,8 @@ const gain_plugin: clap.Plugin = .{
                         break;
                     }
 
-                    if (header.space_id == clap.event.core_event_space_id and
-                        header.type == .param_value)
+                    if (header.space_id == clap.event.core.space_id and
+                        header.type == @backingInt(clap.event.core.Type.param_value))
                     {
                         const event_param_value: *const clap.event.ParamValue = @ptrCast(@alignCast(header));
                         if (event_param_value.param_id == gain_param_id) {
@@ -348,8 +348,8 @@ const extension_params: clap.ext.params.Plugin = .{
             while (i < in.size(in)) : (i += 1) {
                 const event = in.get(in, i);
 
-                if (event.space_id == clap.event.core_event_space_id and
-                    event.type == .param_value)
+                if (event.space_id == clap.event.core.space_id and
+                    event.type == @backingInt(clap.event.core.Type.param_value))
                 {
                     const event_param_value: *const clap.event.ParamValue = @ptrCast(@alignCast(event));
 
